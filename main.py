@@ -1,51 +1,66 @@
 import streamlit as st
 
 # Page configuration
-st.set_page_config(page_title="Smart Message Drafter", page_icon="💼", layout="centered")
+st.set_page_config(page_title="Smart Sales Pitch Generator", page_icon="🚀", layout="centered")
 
-st.title("💼 Smart Business Message Drafter")
-st.write("Apni aam bhasha ya Hinglish mein likho, aur ek professional message taiyar karo—bina kisi AI key ke!")
+st.title("🚀 Smart Sales & Service Pitch Drafter")
+st.write("Apni business details niche bhariye, aur ekdum professional message ya pitch tayaar kijiye—bina kisi AI key ke!")
 
-# Professional & GenZ Corporate Dictionary (Words Mapping)
-translation_dict = {
-    "jaldi": "ASAP / on priority",
-    "paisa": "payment / invoice amount",
-    "nahi hua": "delayed due to a bottleneck",
-    "sorry": "apologies for the oversight / inconvenience",
-    "kal dunga": "will share by tomorrow EOD",
-    "theek hai": "noted and acknowledged",
-    "bhej do": "please share at your earliest",
-    "kaam chal raha hai": "currently in progress",
-    "phone uthao": "kindly connect over a quick call",
-    "baad mein baat karte hain": "let's sync up on this later",
-    "samajh gaya": "understood the context",
-    "galti ho gayi": "regret the discrepancy"
-}
+# Form inputs for structured and clean professional output
+service_name = st.text_input("Aap kya banate/bechte hain? (Jaise: AI Apps & Websites)", "AI Apps and Websites")
+price_range = st.text_input("Price Range kya hai? (Jaise: ₹100 se ₹5000)", "₹100 to ₹5000")
+features = st.text_area("Key Features kya hain? (Jaise: 3-5 variants, easy to use, fast delivery)", "3-5 variants, easy to use, highly customized")
+contact_info = st.text_input("Contact karne ka tareeqa / Number", "DM or contact us to know more")
 
-# User Inputs
-user_input = st.text_area("Yahan apni aam bhasha ya Hinglish mein likhein (Jaise: 'Bhai paisa jaldi bhej do, kaam ruk gaya hai')")
-message_type = st.selectbox("Message kahan bhejna hai?", ["WhatsApp Message", "Professional Email", "Formal Notice"])
+platform_type = st.selectbox("Message kahan bhejna hai?", ["WhatsApp Sales Pitch", "Professional Email Proposal", "Social Media Caption"])
 
-if st.button("🚀 Message Generate Karo"):
-    if not user_input:
-        st.error("Kripya message ki details toh dalein!")
-    else:
-        # Smart dictionary replacement logic
-        processed_text = user_input.lower()
-        for key, value in translation_dict.items():
-            if key in processed_text:
-                processed_text = processed_text.replace(key, value)
-        
-        # Formatting based on message type
-        if message_type == "WhatsApp Message":
-            final_output = f"Hi,\n\nRegarding the update: {processed_text}.\n\nLet's keep this on priority. Thanks!"
-            
-        elif message_type == "Professional Email":
-            final_output = f"Subject: Update regarding current action items\n\nDear Team,\n\nI hope this email finds you well.\n\nThis is to bring to your attention that {processed_text}.\n\nKindly look into this at your earliest convenience.\n\nBest regards,\nProfessional Team"
-            
-        else: # Formal Notice
-            final_output = f"NOTICE:\n\nIt has been observed that {processed_text}.\n\nStrict adherence to timelines is expected henceforth.\n\nManagement"
-        
-        st.success("Aapka professional message tayaar hai:")
-        st.code(final_output, language="text")
-        st.info("💡 Tip: Aap is text ko seedha copy karke use kar sakte hain!")
+if st.button("✨ Professional Pitch Generate Karo"):
+    
+    if platform_type == "WhatsApp Sales Pitch":
+        final_output = f"""Hello Sir/Ma'am, 👋
+
+Are you looking to grow your business digitally? I provide custom **{service_name}** built using advanced AI models.
+
+🔹 **Key Highlights:**
+- Affordable pricing starting from **{price_range}**
+- Features: {features}
+- Super easy to use and manage.
+
+Let's connect to discuss how we can build the perfect solution for you. 
+📞 {contact_info}
+
+Looking forward to hearing from you!"""
+
+    elif platform_type == "Professional Email Proposal":
+        final_output = f"""Subject: Professional {service_name} Solutions at Affordable Rates
+
+Dear Client,
+
+I hope this email finds you well.
+
+I run a specialized service developing custom **{service_name}** powered by cutting-edge AI models. Our solutions are designed to be user-friendly and highly efficient.
+
+**Service Overview:**
+- **Offerings:** {features}
+- **Investment:** Starting from {price_range}
+
+If you are interested in exploring how this can benefit your business, kindly reach out via {contact_info}.
+
+Best regards,
+Business Developer"""
+
+    else: # Social Media Caption
+        final_output = f"""🔥 Transform your business with custom **{service_name}**! 
+
+Looking for a smart digital solution? We build powerful apps and websites using advanced AI models tailored to your needs.
+
+✨ **Why Choose Us?**
+✔️ Price range: {price_range}
+✔️ Includes: {features}
+✔️ User-friendly & high performance
+
+📲 Interested? {contact_info} and let's get started today! #AI #TechSolutions #BusinessGrowth"""
+
+    st.success("Aapka professional message tayaar hai:")
+    st.code(final_output, language="text")
+    st.info("💡 Tip: Ise copy karke seedha apne clients ko bhej sakte hain!")
