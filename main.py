@@ -24,7 +24,7 @@ if st.button("🚀 Message Generate Karo"):
             prompt = f"Tum ek professional business communication expert ho. Niche diye gaye input ko ek behtareen aur clear {message_type} mein badal do. Input: {user_input}"
 
             response = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model='gemini-3.8-flash',
                 contents=prompt,
             )
 
