@@ -1,66 +1,52 @@
 import streamlit as st
+from openai import OpenAI
 
 # Page configuration
-st.set_page_config(page_title="Smart Sales Pitch Generator", page_icon="🚀", layout="centered")
+st.set_page_config(page_title="Nvidia AI Pitch Generator", page_icon="⚡", layout="centered")
 
-st.title("🚀 Smart Sales & Service Pitch Drafter")
-st.write("Apni business details niche bhariye, aur ekdum professional message ya pitch tayaar kijiye—bina kisi AI key ke!")
+st.title("⚡ AI-Powered Business Pitch Generator (Nvidia NIM)")
+st.write("Aap apni aam bhasha ya raw text mein likhein, Nvidia AI ise ekdum professional message mein badal dega!")
 
-# Form inputs for structured and clean professional output
-service_name = st.text_input("Aap kya banate/bechte hain? (Jaise: AI Apps & Websites)", "AI Apps and Websites")
-price_range = st.text_input("Price Range kya hai? (Jaise: ₹100 se ₹5000)", "₹100 to ₹5000")
-features = st.text_area("Key Features kya hain? (Jaise: 3-5 variants, easy to use, fast delivery)", "3-5 variants, easy to use, highly customized")
-contact_info = st.text_input("Contact karne ka tareeqa / Number", "DM or contact us to know more")
+# Sidebar for Nvidia API Key
+st.sidebar.header("🔑 Nvidia API Configuration")
+nvidia_api_key = st.sidebar.text_input("Enter your Nvidia API Key", type="password")
+st.sidebar.info("Aap Nvidia NIM se apni free API key yahan daal sakte hain.")
 
-platform_type = st.selectbox("Message kahan bhejna hai?", ["WhatsApp Sales Pitch", "Professional Email Proposal", "Social Media Caption"])
+# User inputs
+user_input = st.text_area("Aapka message ya business detail yahan likhein (Jaise: 'me ak business krta hu jisme ai models ka use kr ke me app ya website banata hu...')", height=120)
+message_type = st.selectbox("Message kahan bhejna hai?", ["WhatsApp Sales Pitch", "Professional Email Proposal", "Social Media Caption"])
 
-if st.button("✨ Professional Pitch Generate Karo"):
-    
-    if platform_type == "WhatsApp Sales Pitch":
-        final_output = f"""Hello Sir/Ma'am, 👋
+if st.button("🚀 AI se Professional Message Banao"):
+    if not nvidia_api_key:
+        st.error("Kripya pehle sidebar mein apni Nvidia API Key dalein!")
+    elif not user_input:
+        st.error("Kripya kuch details toh dalein!")
+    else:
+        try:
+            # Initialize Nvidia NIM client (OpenAI compatible)
+            client = OpenAI(
+                base_url="https://integrate.api.nvidia.com/v1",
+                api_key=nvidia_api_key
+            )
+            
+            system_prompt = "You are an expert corporate communications and business growth copywriter. Rewrite the user's raw, rough input into a polished, high-converting professional message based on the requested format."
+            user_prompt = f"Convert the following raw text into a professional {message_type}. Keep it engaging, clear, and impactful.\n\nRaw Text: {user_input}"
 
-Are you looking to grow your business digitally? I provide custom **{service_name}** built using advanced AI models.
+            with st.spinner("Nvidia AI is generating your professional pitch..."):
+                response = client.chat.completions.create(
+                    model="meta/llama-3.1-8b-instruct",  # Nvidia NIM standard reliable model
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.7,
+                    max_tokens=1024
+                )
+                
+                final_output = response.choices[0].message.content
 
-🔹 **Key Highlights:**
-- Affordable pricing starting from **{price_range}**
-- Features: {features}
-- Super easy to use and manage.
+            st.success("Aapka AI-generated professional message tayaar hai:")
+            st.markdown(final_output)
 
-Let's connect to discuss how we can build the perfect solution for you. 
-📞 {contact_info}
-
-Looking forward to hearing from you!"""
-
-    elif platform_type == "Professional Email Proposal":
-        final_output = f"""Subject: Professional {service_name} Solutions at Affordable Rates
-
-Dear Client,
-
-I hope this email finds you well.
-
-I run a specialized service developing custom **{service_name}** powered by cutting-edge AI models. Our solutions are designed to be user-friendly and highly efficient.
-
-**Service Overview:**
-- **Offerings:** {features}
-- **Investment:** Starting from {price_range}
-
-If you are interested in exploring how this can benefit your business, kindly reach out via {contact_info}.
-
-Best regards,
-Business Developer"""
-
-    else: # Social Media Caption
-        final_output = f"""🔥 Transform your business with custom **{service_name}**! 
-
-Looking for a smart digital solution? We build powerful apps and websites using advanced AI models tailored to your needs.
-
-✨ **Why Choose Us?**
-✔️ Price range: {price_range}
-✔️ Includes: {features}
-✔️ User-friendly & high performance
-
-📲 Interested? {contact_info} and let's get started today! #AI #TechSolutions #BusinessGrowth"""
-
-    st.success("Aapka professional message tayaar hai:")
-    st.code(final_output, language="text")
-    st.info("💡 Tip: Ise copy karke seedha apne clients ko bhej sakte hain!")
+        except Exception as e:
+            st.error(f"Kuch galti ho gayi: {e}")
