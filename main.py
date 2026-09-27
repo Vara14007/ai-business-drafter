@@ -34,7 +34,7 @@ if st.button("🚀 AI se Professional Message Banao"):
 
             with st.spinner("Nvidia AI is generating your professional pitch..."):
                 response = client.chat.completions.create(
-                    model="meta/llama-3.1-8b-instruct",  # Nvidia NIM standard reliable model
+                    model="meta/llama-3.3-70b-instruct",  # Nvidia NIM standard reliable model
                     messages=[
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt}
